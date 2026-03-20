@@ -2,7 +2,7 @@ import 'server-only';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth/auth';
 import { redirect } from 'next/navigation';
-import { Session } from '@/lib/types';
+import type { Session } from '@/lib/types';
 import { cache } from 'react'; // Cache DAL calls per render to avoid duplicate fetches.
 
 // Data Access Layer (DAL) helper.

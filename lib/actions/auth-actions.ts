@@ -3,10 +3,10 @@
 import {
   signupSchema,
   loginSchema,
-  type ActionResponse,
   type SignupInput,
   type LoginInput,
 } from '@/lib/schemas/auth-schema';
+import type { ActionResponse } from '@/lib/types';
 import { auth } from '@/lib/auth/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';

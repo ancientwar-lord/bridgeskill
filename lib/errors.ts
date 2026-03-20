@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { APIError } from 'better-auth/api';
-import type { ActionResponse } from '@/lib/schemas/auth-schema';
+import type { ActionResponse } from '@/lib/types';
 import { logger } from './logger';
 
 export class AppError extends Error {

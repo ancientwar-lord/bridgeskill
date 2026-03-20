@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import { ClientUser } from '@/lib/types';
+import type { ClientUser } from '@/lib/types';
 
 export default function ClientLayout({
   children,

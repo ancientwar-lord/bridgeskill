@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from '@/lib/auth/auth-client';
 import { useRouter } from 'next/navigation';
-import { ClientUser } from '@/lib/types';
+import type { ClientUser } from '@/lib/types';
 import {
   LayoutDashboard,
   Goal,
