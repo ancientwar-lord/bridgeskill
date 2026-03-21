@@ -43,3 +43,6 @@ next-env.d.ts
 digest.txt
 .github/agents/*
 .github/prompts/*
+.github/skills/*
+
+.chub/*

@@ -58,6 +58,7 @@ and normalized error handling.
 **Purpose**: Project initialization and basic structure
 
 - [ ] T001 Create project structure per implementation plan
+- [ ] T002 Ensure plan/spec/tasks docs comply with Lean MVP documentation rules
 - [ ] T002 Initialize [language] project with [framework] dependencies
 - [ ] T003 [P] Configure linting and formatting tools
 

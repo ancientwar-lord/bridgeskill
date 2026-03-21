@@ -1,22 +1,22 @@
 <!--
 Sync Impact Report
-Version change: template-placeholder -> 1.0.0
+Version change: 1.0.0 -> 1.1.0
 Modified principles:
-- Placeholder Principle 1 -> I. MVP First, Then Harden
-- Placeholder Principle 2 -> II. Predictable Layering and Separation
-- Placeholder Principle 3 -> III. Schema-First Contracts with Zod
-- Placeholder Principle 4 -> IV. Consistency and AI-Agent Readability
-- Placeholder Principle 5 -> V. Safe Errors, Focused Tests, and Measured Performance
+- I. MVP First, Then Harden (unchanged)
+- II. Predictable Layering and Separation (unchanged)
+- III. Schema-First Contracts with Zod (unchanged)
+- IV. Consistency and AI-Agent Readability (unchanged)
+- V. Safe Errors, Focused Tests, and Measured Performance (unchanged)
+- Added VI. Lean MVP Planning and Documentation
 Added sections:
-- Technical Constraints & Project Structure
-- Delivery Workflow & Definition of Done
+- None (principle added under Core Principles)
 Removed sections:
 - None
 Templates requiring updates:
-- ✅ updated: .specify/templates/plan-template.md
-- ✅ updated: .specify/templates/spec-template.md
-- ✅ updated: .specify/templates/tasks-template.md
-- ✅ updated: README.md
+- ✅ updated: .specify/templates/plan-template.md (align with lean MVP doc guidance)
+- ✅ updated: .specify/templates/spec-template.md (align with lean MVP doc guidance)
+- ✅ updated: .specify/templates/tasks-template.md (align with lean MVP doc guidance)
+- ✅ updated: README.md (confirm constitution reference update)
 Follow-up TODOs:
 - None
 -->
@@ -83,6 +83,18 @@ automated assistance reliable.
 Rationale: Reliability and speed come from disciplined essentials, not blanket
 complexity.
 
+### VI. Lean MVP Planning and Documentation
+
+- Project documentation, specifications, and planning artifacts MUST be lean,
+  immediately actionable, and directly tied to current MVP feature slices.
+- Avoid corporate boilerplate, exhaustive test case matrices, and deep priority
+  tracking; scope reporting to what is needed for execution and demo readiness.
+- Include only core assumptions, minimal acceptance criteria, and clear next
+  development steps.
+
+Rationale: In rapid prototyping and hackathon contexts, documentation is an
+execution tool, not an administrative burden.
+
 ## Technical Constraints & Project Structure
 
 - Required stack:
@@ -127,6 +139,9 @@ complexity.
   2.  Validate core functionality and failure handling.
   3.  Refactor only when reuse or maintenance pressure is proven.
   4.  Add polish last.
+- Documentation and planning MUST follow Lean MVP rules: concise goals,
+  implementation-focused steps, no corporate boilerplate, no exhaustive test
+  scenario catalogs, no complex priority scorecards.
 - Pull request expectations:
   - Include a short note confirming layer compliance, schema coverage, and
     error-handling path.
@@ -164,4 +179,4 @@ complexity.
   - Periodic review cadence is at least once per hackathon milestone or monthly,
     whichever comes first.
 
-**Version**: 1.0.0 | **Ratified**: 2026-03-18 | **Last Amended**: 2026-03-18
+**Version**: 1.1.0 | **Ratified**: 2026-03-18 | **Last Amended**: 2026-03-21
