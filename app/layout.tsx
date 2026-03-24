@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import '@/ui/styles/globals.css';
 import { getCurrentSession, getUserDTO } from '@/lib/auth/auth-utils';
-import ClientLayout from '@/ui/components/ClientLayout';
+import DashboardLayout from '@/ui/components/DashboardLayout';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -31,7 +31,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ClientLayout user={safeUserData}>{children}</ClientLayout>
+        <DashboardLayout user={safeUserData}>{children}</DashboardLayout>
       </body>
     </html>
   );

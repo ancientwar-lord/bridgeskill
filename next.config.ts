@@ -1,7 +1,20 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value:
+              "frame-src 'self' https://*.tinyfish.io https://*.unikraft.app https://*.tinyfish.ai http://localhost:*;",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
