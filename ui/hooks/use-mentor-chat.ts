@@ -40,6 +40,14 @@ export function useMentorChat(): MentorChatState {
   const [streamingUrl, setStreamingUrl] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
+  // Stable ID generation to avoid collisions in rapid message creation
+  const messageIdCounterRef = useRef<number>(0);
+  const nextMessageId = () => {
+    const now = Date.now();
+    messageIdCounterRef.current = (messageIdCounterRef.current + 1) % 1000;
+    return now * 1000 + messageIdCounterRef.current;
+  };
+
   const addUrl = useCallback(() => {
     const normalized = url.trim();
     if (!normalized) return;
@@ -95,13 +103,13 @@ export function useMentorChat(): MentorChatState {
       abortControllerRef.current = new AbortController();
 
       const userMessage: ChatMessage = {
-        id: Date.now(),
+        id: nextMessageId(),
         role: 'user',
         text: trimmedGoal,
       };
 
       const assistantMessage: ChatMessage = {
-        id: Date.now() + 1,
+        id: nextMessageId(),
         role: 'assistant',
         text: 'Starting automation...',
       };
@@ -136,10 +144,9 @@ export function useMentorChat(): MentorChatState {
           const { done, value } = await reader.read();
           if (done) break;
 
-          buffer += decoder.decode(value, { stream: true });
-          setRawResponse(
-            (prev) => prev + decoder.decode(value, { stream: true }),
-          );
+          const chunk = decoder.decode(value, { stream: true });
+          buffer += chunk;
+          setRawResponse((prev) => prev + chunk);
 
           // Split by newline and keep the last incomplete part in the buffer
           const lines = buffer.split('\n');

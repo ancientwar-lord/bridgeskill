@@ -25,7 +25,7 @@ export default function DashboardLayout({
         />
       )}
       <main
-        className={`min-h-screen transition-all duration-300  ${user ? (isSidebarCollapsed ? 'md:pl-20' : 'md:pl-50') : ''}`}
+        className={`min-h-screen transition-all duration-300  ${user ? (isSidebarCollapsed ? 'md:pl-20' : 'md:pl-52') : ''}`}
       >
         {children}
       </main>

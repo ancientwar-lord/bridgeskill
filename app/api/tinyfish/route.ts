@@ -1,13 +1,13 @@
 export async function POST(request: Request): Promise<Response> {
   try {
-    // Receive data (url and goal) from frontend
+    // Receive data (optional url and required goal) from frontend
     const body = await request.json();
     const { url, goal } = body as { url?: string; goal?: string };
 
     // Validation checks
-    if (!url || !goal) {
+    if (!goal) {
       return new Response(
-        JSON.stringify({ success: false, error: 'URL and goal are required' }),
+        JSON.stringify({ success: false, error: 'Goal is required' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } },
       );
     }

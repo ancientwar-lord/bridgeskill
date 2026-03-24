@@ -50,7 +50,7 @@ const ChatForm = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className={`relative rounded-4xl border border-white/10 bg-[#1c2026]/80 p-3 shadow-2xl backdrop-blur-2xl transition-all duration-300 focus-within:border-[#adc7ff]/50 focus-within:ring-1 focus-within:ring-[#adc7ff]/30 w-full ${
+      className={`rounded-4xl border border-white/10 bg-[#1c2026]/80 p-3 shadow-2xl backdrop-blur-2xl transition-all duration-300 focus-within:border-[#adc7ff]/50 focus-within:ring-1 focus-within:ring-[#adc7ff]/30 w-full ${
         !hasMessages ? 'max-w-3xl mx-auto' : 'max-w-4xl mx-auto'
       }`}
     >
@@ -273,13 +273,13 @@ export default function MentorComp() {
           className="flex items-center gap-2 rounded-l-full border border-white/10 bg-[#1f2937]/95 px-3 py-2 text-sm text-slate-200 shadow-lg shadow-black/30 backdrop-blur transition hover:bg-[#2f3a4e]"
         >
           {showPreviousChats ? <X size={20} /> : <ChevronLeft size={20} />}
-          <p className="m-0 text-sm text-slate-300 w-40">
+          <p className="m-0 text-sm text-slate-300 w-36">
             {' '}
             {showPreviousChats ? 'Hide' : 'Show'} Chats
           </p>
         </button>
         {showPreviousChats && (
-          <div className="py-4  text-slate-300 overflow-y-auto h-[80vh] bg-[#1f2937]/95 backdrop-blur-xl border-l border-white/10 rounded-b-lg ml-4 w-48">
+          <div className="py-4  text-slate-300 overflow-y-auto h-[80vh] bg-[#1f2937]/95 backdrop-blur-xl border-l border-white/10 rounded-b-lg ml-4 w-44">
             <p className="text-sm p-4">conversations.</p>
           </div>
         )}
@@ -288,10 +288,10 @@ export default function MentorComp() {
       {/* --- TOPBAR IS NOW HANDLED IN app/mentor-ai/layout.tsx --- */}
 
       {/* --- MAIN CONTENT AREA --- */}
-      <main className="flex-1 flex flex-col w-full h-full pt-20 px-4 sm:px-6 relative z-10 overflow-hidden">
+      <main className="flex-1 flex flex-col w-full h-full px-4 sm:px-6 relative z-10 overflow-hidden">
         {!hasMessages ? (
           /* --- INITIAL CENTERED STATE --- */
-          <div className="flex-1 flex flex-col items-center justify-center mt-10 w-full max-w-4xl mx-auto animate-in fade-in zoom-in-95 duration-700">
+          <div className="flex-1 flex flex-col items-center justify-center mt-30 w-full max-w-4xl mx-auto animate-in fade-in zoom-in-95 duration-700">
             <h2 className="text-4xl md:text-5xl font-bold text-center mb-8 tracking-tight bg-clip-text text-transparent bg-linear-to-r from-white to-slate-400">
               What do you want to Learn?
             </h2>
@@ -305,9 +305,9 @@ export default function MentorComp() {
             )}
             <div className="mt-8 flex gap-3 flex-wrap justify-center">
               {[
-                'Extract pricing plans from Stripe',
-                "Find the CEO's email on this site",
-                'Scrape top 10 products on Amazon',
+                'Find the latest news articles on AI.',
+                'Find the latest research papers on AI agents.',
+                'Top 10 startsups in AI space.',
               ].map((suggestion) => (
                 <button
                   key={suggestion}
@@ -321,7 +321,9 @@ export default function MentorComp() {
           </div>
         ) : (
           /* --- CHAT STATE --- */
-          <div className="flex-1 w-full max-w-4xl mx-auto overflow-y-auto pt-4 scroll-smooth hide-scrollbar">
+          <div
+            className={`flex-1 ${loading && streamingUrl ? '' : 'min-h-120'}   w-full max-w-4xl mx-auto overflow-y-auto pt-4 scroll-smooth hide-scrollbar`}
+          >
             <div className="flex flex-col gap-8 w-full">
               {messages.map((message) => {
                 const isAssistant = message.role === 'assistant';
@@ -374,7 +376,7 @@ export default function MentorComp() {
 
       {/* --- STICKY BOTTOM INPUT --- */}
       {hasMessages && (
-        <div className="sticky bottom-0 left-0 w-full z-20 bg-linear-to-t from-[#10141a] via-[#10141a] to-transparent pt-12 pb-6 px-4 pointer-events-none">
+        <div className=" sticky bottom-0 left-0 w-full z-20 bg-linear-to-t from-[#10141a] via-[#10141a] to-transparent pt-12 pb-6 px-4 pointer-events-none">
           <div className="w-full max-w-4xl mx-auto flex flex-col items-center animate-in slide-in-from-bottom-4 duration-500 pointer-events-auto">
             {error && (
               <p className="mb-4 rounded-xl bg-red-950/80 border border-red-500/30 px-4 py-2 text-sm text-red-200 text-center w-max backdrop-blur-md">
@@ -382,7 +384,7 @@ export default function MentorComp() {
               </p>
             )}
 
-            <div className="w-full relative z-20">
+            <div className="w-full   z-20">
               <ChatForm {...chatFormProps} />
             </div>
           </div>

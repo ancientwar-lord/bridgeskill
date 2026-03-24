@@ -49,7 +49,7 @@ export default function Sidebar({
   return (
     <aside
       className={`md:flex flex-col fixed left-0 top-0 bottom-0 z-40 bg-slate-950/95 backdrop-blur border border-slate-800  shadow-xl shadow-black/40 transition-all duration-300 ${
-        isCollapsed ? 'w-20' : 'w-50'
+        isCollapsed ? 'w-20' : 'w-52'
       }`}
     >
       {/* Toggle Button */}
