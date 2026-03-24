@@ -6,7 +6,7 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 import type { ClientUser } from '@/lib/types';
 
-export default function ClientLayout({
+export default function DashboardLayout({
   children,
   user,
 }: {
@@ -25,7 +25,7 @@ export default function ClientLayout({
         />
       )}
       <main
-        className={`min-h-screen transition-all duration-300  ${user ? (isSidebarCollapsed ? 'md:pl-20' : 'md:pl-64') : ''}`}
+        className={`min-h-screen transition-all duration-300  ${user ? (isSidebarCollapsed ? 'md:pl-20' : 'md:pl-52') : ''}`}
       >
         {children}
       </main>

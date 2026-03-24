@@ -8,6 +8,10 @@ import type { ClientUser } from '@/lib/types';
 import {
   LayoutDashboard,
   Goal,
+  Compass,
+  Briefcase,
+  Map,
+  Settings,
   ChevronLeft,
   LogIn,
   GraduationCap,
@@ -31,13 +35,21 @@ export default function Sidebar({
       icon: <LayoutDashboard size={20} />,
       badge: '0',
     },
-    { name: 'mentor', href: '/mentor', icon: <Goal size={20} /> },
+    { name: 'Mentor AI', href: '/mentor-ai', icon: <Goal size={20} /> },
+    { name: 'Explore', href: '/explore', icon: <Compass size={20} /> },
+    {
+      name: 'Opportunities',
+      href: '/opportunities',
+      icon: <Briefcase size={20} />,
+    },
+    { name: 'Roadmaps', href: '/roadmaps', icon: <Map size={20} /> },
+    { name: 'Settings', href: '/settings', icon: <Settings size={20} /> },
   ];
 
   return (
     <aside
-      className={`md:flex flex-col fixed left-0 top-0 bottom-0 z-40 bg-linear-to-b from-white via-slate-50 to-purple-50/40 border-r border-purple-200/40 transition-all duration-300 ${
-        isCollapsed ? 'w-20' : 'w-64'
+      className={`md:flex flex-col fixed left-0 top-0 bottom-0 z-40 bg-slate-950/95 backdrop-blur border border-slate-800  shadow-xl shadow-black/40 transition-all duration-300 ${
+        isCollapsed ? 'w-20' : 'w-52'
       }`}
     >
       {/* Toggle Button */}
@@ -61,7 +73,7 @@ export default function Sidebar({
               href="/dashboard"
               className="flex items-center justify-center"
             >
-              <GraduationCap className="w-8 h-8 text-purple-950" />
+              <GraduationCap className="w-8 h-8 text-zinc-400 -rotate-12" />
             </Link>
           ) : (
             <Link
@@ -69,12 +81,12 @@ export default function Sidebar({
               className="text-xl font-bold text-zinc-600 flex items-end whitespace-nowrap pt-4 pl-4"
             >
               <div className="relative flex flex-col items-center">
-                <GraduationCap className="absolute -top-5 -left-4 w-8 h-8 text-purple-950 -rotate-12" />
-                <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-950 to-violet-900/60 text-3xl font-bold">
+                <GraduationCap className="absolute -top-5 -left-4 w-8 h-8 text-zinc-400 -rotate-12" />
+                <span className="text-transparent bg-clip-text bg-linear-to-b from-white to-slate-500 text-3xl font-bold">
                   B
                 </span>
               </div>
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-950 to-violet-900/60 ">
+              <span className="text-transparent bg-clip-text bg-linear-to-b from-white to-slate-500 ">
                 ridgeSkill
               </span>
             </Link>
@@ -96,7 +108,7 @@ export default function Sidebar({
               title={isCollapsed ? link.name : ''}
               className={`group flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${
                 isActive
-                  ? 'bg-linear-to-r from-purple-100 to-violet-100 text-purple-950 border border-purple-200/60 shadow-sm shadow-purple-200/30'
+                  ? 'bg-linear-to-r from-purple-50 to-violet-50/60 text-purple-950 border border-purple-200/60 shadow-sm shadow-purple-200/30'
                   : 'text-slate-600 hover:bg-linear-to-r hover:from-purple-50 hover:to-violet-50/60 hover:text-purple-950 border border-transparent'
               } ${isCollapsed ? 'justify-center' : ''}`}
             >
@@ -104,14 +116,14 @@ export default function Sidebar({
                 className={`shrink-0 h-5 w-5 transition-colors duration-200 ${
                   isActive
                     ? 'text-purple-950'
-                    : 'text-purple-950/50 group-hover:text-purple-950'
+                    : 'text-purple-100/70 group-hover:text-purple-950'
                 }`}
               >
                 {link.icon}
               </span>
               {!isCollapsed && (
                 <span
-                  className={`ml-3 flex-1 whitespace-nowrap ${isActive ? 'text-purple-950 font-semibold' : 'text-purple-950/50 group-hover:text-purple-950'}`}
+                  className={`ml-3 flex-1 whitespace-nowrap ${isActive ? 'text-purple-950 font-semibold' : 'text-purple-100/70 group-hover:text-purple-950'}`}
                 >
                   {link.name}
                 </span>
@@ -136,17 +148,17 @@ export default function Sidebar({
       <div className="p-4 py-4 border-t border-purple-200/40 bg-linear-to-t from-purple-50/30 to-transparent">
         {user ? (
           <div
-            className={`flex items-center gap-3 p-2 rounded-xl hover:bg-linear-to-r hover:from-purple-50 hover:to-violet-50/50 transition-all cursor-pointer ${isCollapsed ? 'justify-center' : ''}`}
+            className={`flex items-center gap-3 p-2 rounded-xl hover:bg-linear-to-r hover:from-purple-300 hover:to-violet-900/50 transition-all cursor-pointer ${isCollapsed ? 'justify-center' : ''}`}
           >
             <div className="w-8 h-8 rounded-full bg-linear-to-br from-purple-600 via-purple-800 to-violet-900 flex items-center justify-center text-white text-xs font-bold shrink-0 shadow-lg shadow-purple-500/30">
               {user.email ? user.email[0].toUpperCase() : 'U'}
             </div>
             {!isCollapsed && (
               <div className="flex-1 min-w-0 overflow-hidden">
-                <p className="text-sm font-medium text-slate-900 truncate">
+                <p className="text-sm font-medium text-slate-200 truncate">
                   {user.name || 'User'}
                 </p>
-                <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                <p className="text-xs text-slate-300 truncate">{user.email}</p>
                 <button
                   onClick={async () => {
                     await signOut();

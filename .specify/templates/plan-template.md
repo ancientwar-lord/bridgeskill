@@ -32,6 +32,7 @@
 _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - [ ] MVP slice is defined as one end-to-end user-visible flow.
+- [ ] Documentation and planning are lean, MVP-focused, and avoid corporate boilerplate.
 - [ ] Architecture follows UI -> Actions -> Services (optional) -> Data/Auth.
 - [ ] UI has no direct database or auth provider calls.
 - [ ] All external and action inputs map to Zod schemas in lib/schemas.

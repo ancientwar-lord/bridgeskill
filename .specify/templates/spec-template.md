@@ -107,6 +107,9 @@ _Example of marking unclear requirements:_
   validate -> try -> catch -> normalize -> respond.
 - **CA-005**: Feature MUST identify critical-path tests required for auth,
   validation, and core business logic failure paths.
+- **CA-006**: Feature documentation and planning outputs MUST follow Lean MVP
+  constraints (no corporate process boilerplate, no exhaustive test scenario
+  matrices, minimal priority tracking).
 - **CA-006**: Feature MUST identify where the mandatory flow comment applies in
   newly created TS/JS files.
 

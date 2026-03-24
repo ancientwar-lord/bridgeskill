@@ -33,7 +33,14 @@ graph TD
 - Researcher Mode: research direction and opportunity guidance
 - Founder Mode: startup exploration and execution support
 
-## Technology Stack
+## Technology Stack & Workflow
+
+### Development Methodology
+
+This project is developed using Spec-Driven Development (SDD) with Spec-Kit, adhering to a strict lifecycle to ensure code quality and alignment with project goals:
+Constitution (Principles, including Lean MVP planning/docs) → Specify (Requirements) → Plan (Architecture) → Tasks (Execution) → Implement (Coding).
+
+### Core Stack
 
 - Framework: Next.js 16 (App Router)
 - Runtime/UI: React 19, TypeScript
