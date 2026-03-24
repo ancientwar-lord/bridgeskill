@@ -34,13 +34,9 @@ export function useMentorChat(): MentorChatState {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [rawResponse, setRawResponse] = useState<string>('');
-
-  // New states for TinyFish specific features
   const [runId, setRunId] = useState<string | null>(null);
   const [streamingUrl, setStreamingUrl] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
-
-  // Stable ID generation to avoid collisions in rapid message creation
   const messageIdCounterRef = useRef<number>(0);
   const nextMessageId = () => {
     const now = Date.now();
@@ -147,8 +143,6 @@ export function useMentorChat(): MentorChatState {
           const chunk = decoder.decode(value, { stream: true });
           buffer += chunk;
           setRawResponse((prev) => prev + chunk);
-
-          // Split by newline and keep the last incomplete part in the buffer
           const lines = buffer.split('\n');
           buffer = lines.pop() || '';
 
@@ -178,11 +172,9 @@ export function useMentorChat(): MentorChatState {
                     setLoading(false);
                     break;
                   case 'HEARTBEAT':
-                    // Just keeping connection alive
                     break;
                 }
 
-                // Update UI stream
                 setMessages((prev) =>
                   prev.map((message) =>
                     message.id === assistantMessage.id
@@ -197,7 +189,7 @@ export function useMentorChat(): MentorChatState {
           }
         }
       } catch (err: unknown) {
-        if (err instanceof Error && err.name === 'AbortError') return; // Handled by cancel
+        if (err instanceof Error && err.name === 'AbortError') return;
 
         const message = err instanceof Error ? err.message : 'Unexpected error';
         setError(message);

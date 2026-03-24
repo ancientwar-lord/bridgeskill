@@ -54,10 +54,6 @@ const ChatForm = ({
         !hasMessages ? 'max-w-3xl mx-auto' : 'max-w-4xl mx-auto'
       }`}
     >
-      {/* CONDITIONAL TOP AREA:
-        If loading is true and a stream URL is available -> show interactive live browser area
-        Otherwise -> show normal URL input fields
-      */}
       {loading && streamingUrl ? (
         <div className="mb-3 rounded-2xl border border-white/10 bg-[#171f2a] overflow-hidden shadow-inner animate-in fade-in zoom-in-95 duration-500">
           <div className="bg-[#0f1726] px-4 py-2.5 border-b border-[#2b3340] flex items-center justify-between">
@@ -79,7 +75,6 @@ const ChatForm = ({
               )}
             </div>
           </div>
-          {/* Constrained height so it doesn't cover the whole screen in sticky mode */}
           <div className="w-full bg-[#0a0f16] relative h-48 sm:h-64 lg:h-72">
             <iframe
               src={streamingUrl}
@@ -284,17 +279,18 @@ export default function MentorComp() {
           </div>
         )}
       </div>
-
-      {/* --- TOPBAR IS NOW HANDLED IN app/mentor-ai/layout.tsx --- */}
-
-      {/* --- MAIN CONTENT AREA --- */}
       <main className="flex-1 flex flex-col w-full h-full px-4 sm:px-6 relative z-10 overflow-hidden">
         {!hasMessages ? (
-          /* --- INITIAL CENTERED STATE --- */
           <div className="flex-1 flex flex-col items-center justify-center mt-30 w-full max-w-4xl mx-auto animate-in fade-in zoom-in-95 duration-700">
-            <h2 className="text-4xl md:text-5xl font-bold text-center mb-8 tracking-tight bg-clip-text text-transparent bg-linear-to-r from-white to-slate-400">
-              What do you want to Learn?
-            </h2>
+            <div className="text-center mb-8">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-white to-[#adc7ff] mb-4">
+                Hi, I`m your Personal Mentor.
+              </h2>
+              <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+                Let`s navigate challenges and map the road to your dream career.
+                What are we working on today?
+              </p>
+            </div>
             <div className="w-full relative z-20">
               <ChatForm {...chatFormProps} />
             </div>
