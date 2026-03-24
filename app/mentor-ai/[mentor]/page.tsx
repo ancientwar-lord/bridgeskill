@@ -1,32 +1,39 @@
 import Link from 'next/link';
+import BaseAgentChat from '@/ui/components/BaseAgentChat';
+import { agentConfigs } from '@/lib/agentConfigs';
 
-const mentors = [
-  {
-    title: 'Founder Mentor',
-    slug: 'founder',
-    description: 'Insights and strategies for startup founders.',
-  },
-  {
-    title: 'Research Mentor',
-    slug: 'research',
-    description: 'Advanced research support and guidance.',
-  },
-];
+const mentors = agentConfigs;
+
+type MentorRouteParams = { mentor?: string | string[] | undefined };
 
 interface MentorPageProps {
-  params: Promise<{ mentor: string }>;
+  params: MentorRouteParams | Promise<MentorRouteParams>;
+}
+
+export function generateStaticParams() {
+  return mentors.map((mentor) => ({ mentor: mentor.slug }));
 }
 
 export default async function DynamicMentorPage({ params }: MentorPageProps) {
-  const { mentor: mentorparam } = await params;
-  const mentor = mentors.find((m) => m.slug === mentorparam);
+  const resolvedParams = params instanceof Promise ? await params : params;
+  const rawMentor = resolvedParams?.mentor;
+  const mentorSlug = Array.isArray(rawMentor)
+    ? rawMentor.filter(Boolean).join('/').toLowerCase()
+    : (rawMentor ?? '').toLowerCase();
+  const mentorParam = mentorSlug.trim();
+  const mentorConfig = mentors.find(
+    (item) => item.slug.toLowerCase() === mentorParam,
+  );
 
-  if (!mentor) {
+  if (!mentorConfig) {
     return (
       <main className="p-8">
         <h1 className="text-3xl font-bold">Mentor not found</h1>
         <p className="mt-2 text-slate-300">
-          No mentor route matches &ldquo;{mentorparam}&rdquo;.
+          No mentor route matches &ldquo;{mentorParam}&rdquo;.
+        </p>
+        <p className="mt-2 text-slate-400">
+          Available mentors: {mentors.map((m) => m.slug).join(', ')}
         </p>
         <Link
           href="/mentor-ai"
@@ -38,26 +45,5 @@ export default async function DynamicMentorPage({ params }: MentorPageProps) {
     );
   }
 
-  return (
-    <main className="p-8">
-      <h1 className="text-3xl font-bold">{mentor.title}</h1>
-      <p className="mt-4 text-slate-300">{mentor.description}</p>
-
-      <div className="mt-6">
-        <h2 className="text-xl font-semibold mb-2">All mentors</h2>
-        <ul className="space-y-2">
-          {mentors.map((m) => (
-            <li key={m.slug}>
-              <Link
-                href={`/mentor-ai/${m.slug}`}
-                className="text-[#adc7ff] hover:text-white"
-              >
-                {m.title}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </main>
-  );
+  return <BaseAgentChat config={mentorConfig} />;
 }

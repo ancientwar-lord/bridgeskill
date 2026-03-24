@@ -25,3 +25,14 @@ export type ActionResponse<T = Record<string, unknown>> = {
     [K in keyof T]?: string[];
   };
 };
+
+// Configuration interface for agents, used to dynamically render UI and determine API routes.
+export interface AgentConfig {
+  title: string;
+  subtitle: string;
+  placeholder: string;
+  suggestions: string[];
+  agentName: string;
+  agentInitials: string;
+  apiRoute: string;
+}
