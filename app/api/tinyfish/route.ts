@@ -1,5 +1,18 @@
+import { auth } from '@/lib/auth/auth';
+
 export async function POST(request: Request): Promise<Response> {
   try {
+    const session = await auth.api.getSession({ headers: request.headers });
+    if (!session?.user?.id) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Unauthorized' }),
+        {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
+    }
+
     // Receive data (optional url and required goal) from frontend
     const body = await request.json();
     const { url, goal } = body as { url?: string; goal?: string };

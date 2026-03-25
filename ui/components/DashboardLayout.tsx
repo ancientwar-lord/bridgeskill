@@ -13,7 +13,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
   user: ClientUser;
 }) {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   return (
     <div>
       {!user && <Navbar />}
