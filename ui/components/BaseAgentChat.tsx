@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { useAgentChat } from '@/ui/hooks/use-agent-chat';
+import { useChatUI } from '@/ui/hooks/use-chat-ui';
 import ChatForm from '@/ui/components/ChatForm';
+import ChatHistory from '@/ui/components/ChatHistory';
+import AgentSettings from '@/ui/components/AgentSettings';
 import { ChevronLeft, X, Settings } from 'lucide-react';
 import { AgentConfig } from '@/lib/types';
 
@@ -11,28 +12,46 @@ interface BaseAgentChatProps {
 }
 
 export default function BaseAgentChat({ config }: BaseAgentChatProps) {
-  const [showUrlField, setShowUrlField] = useState(false);
-  const [showPreviousChats, setShowPreviousChats] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const chatProps = useAgentChat(config.apiRoute);
-  const { goal, setGoal, messages, loading, streamingUrl, error } = chatProps;
+  const {
+    chatProps,
+    chats,
+    chatsLoading,
+    chatsError,
+    handleSelectChat,
+    hasMessages,
+    goNewChat,
+    deleteChat,
+    textareaRef,
+    settingsOpen,
+    setSettingsOpen,
+  } = useChatUI(config.apiRoute, config.slug ?? 'personal', config.title);
 
-  const hasMessages = messages.length > 0;
-
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages, loading]);
+  const {
+    showUrlField,
+    setShowUrlField,
+    showPreviousChats,
+    setShowPreviousChats,
+    messagesEndRef,
+    loading,
+    streamingUrl,
+    error,
+    setGoal,
+    messages,
+    activeChatId,
+    setActiveChatId,
+  } = chatProps;
 
   return (
     <div className="flex flex-col bg-[#10141a] text-[#dfe2eb] relative z-0 selection:bg-[#adc7ff]/30">
       {/* Top-left settings button */}
+      <AgentSettings
+        config={config}
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+      />
       <div className=" relative z-50 pointer-events-auto">
         <button
-          onClick={() => {
-            /* add settings action here */
-          }}
+          onClick={() => setSettingsOpen(true)}
           className=" fixed top-20  flex items-center gap-2 rounded-full border border-white/10 bg-[#1f2937]/95 p-3 text-sm text-slate-200 shadow-lg shadow-black/30 backdrop-blur transition hover:bg-[#2f3a4e] ml-4"
         >
           <Settings size={20} />
@@ -53,22 +72,38 @@ export default function BaseAgentChat({ config }: BaseAgentChatProps) {
           </p>
         </button>
         {showPreviousChats && (
-          <div className="py-4  text-slate-300 overflow-y-auto h-[80vh] bg-[#1f2937]/95 backdrop-blur-xl border-l border-white/10 rounded-b-lg ml-4 w-44">
-            <p className="text-sm p-4">conversations.</p>
+          <div className="py-4 text-slate-300 overflow-y-auto h-[80vh] bg-[#1f2937]/95 backdrop-blur-xl border-l border-white/10 rounded-b-lg ml-4 w-44">
+            <div className="w-full px-4">
+              <button
+                onClick={goNewChat}
+                className="w-full text-sm px-2 py-1 rounded border border-white/15  bg-[#3c4b63]  hover:bg-[#2e4b7b] "
+              >
+                + New Chat
+              </button>
+            </div>
+            <div className="border-b border-slate-300 my-4" />
+            <div className="flex items-center justify-between px-3 pb-2">
+              <h3 className="text-xs font-semibold text-slate-200">Recent</h3>
+            </div>
+            <ChatHistory
+              chats={chats}
+              chatsLoading={chatsLoading}
+              chatsError={chatsError}
+              activeChatId={activeChatId}
+              setActiveChatId={setActiveChatId}
+              onSelectChat={handleSelectChat}
+              deleteChat={deleteChat}
+            />
           </div>
         )}
       </div>
       <main className="flex-1 flex flex-col w-full h-full px-4 sm:px-6 relative z-10 overflow-hidden">
         {!hasMessages ? (
-          <div className="flex-1 flex flex-col items-center justify-center mt-30 w-full max-w-4xl mx-auto animate-in fade-in zoom-in-95 duration-700">
-            {/* DYNAMIC TEXTS */}
-            <div className="text-center mb-8">
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-white to-[#adc7ff] mb-4">
-                {config.title}
-              </h2>
-              <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+          <div className="flex-1 flex flex-col items-center justify-center mt-20 w-full max-w-4xl mx-auto animate-in fade-in zoom-in-95 duration-700">
+            <div className="text-center m-8 ">
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-white to-[#adc7ff] mb-4">
                 {config.subtitle}
-              </p>
+              </h2>
             </div>
 
             <div className="w-full relative z-20">
@@ -77,6 +112,7 @@ export default function BaseAgentChat({ config }: BaseAgentChatProps) {
                 showUrlField={showUrlField}
                 setShowUrlField={setShowUrlField}
                 hasMessages={hasMessages}
+                textareaRef={textareaRef}
                 placeholder={config.placeholder}
               />
             </div>
@@ -111,7 +147,7 @@ export default function BaseAgentChat({ config }: BaseAgentChatProps) {
                       className={`flex flex-col gap-3 w-full ${isAssistant ? 'max-w-full' : 'max-w-[80%]'}`}
                     >
                       {!isAssistant && (
-                        <div className="self-end rounded-3xl rounded-tr-sm bg-linear-to-br from-[#2f394d] to-[#1f2633] border border-white/5 px-5 py-4 text-[15px] shadow-lg text-white break-words">
+                        <div className="self-end rounded-3xl rounded-tr-sm bg-linear-to-br from-[#2f394d] to-[#1f2633] border border-white/5 px-5 py-4 text-[15px] shadow-lg text-white wrap-break-word">
                           {message.text}
                         </div>
                       )}
@@ -157,6 +193,7 @@ export default function BaseAgentChat({ config }: BaseAgentChatProps) {
                 showUrlField={showUrlField}
                 setShowUrlField={setShowUrlField}
                 hasMessages={hasMessages}
+                textareaRef={textareaRef}
                 placeholder={config.placeholder}
               />
             </div>

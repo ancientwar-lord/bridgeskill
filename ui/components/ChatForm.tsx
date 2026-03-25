@@ -1,25 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-
-export interface ChatFormProps {
-  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-  showUrlField: boolean;
-  setShowUrlField: (show: boolean) => void;
-  urls: string[];
-  removeUrl: (url: string) => void;
-  url: string;
-  setUrl: (url: string) => void;
-  addUrl: () => void;
-  loading: boolean;
-  goal: string;
-  setGoal: (goal: string) => void;
-  hasMessages: boolean;
-  runId: string | null;
-  streamingUrl: string | null;
-  cancelRun: () => void;
-  placeholder?: string;
-}
+import type { ChatFormProps } from '@/lib/types';
 
 const ChatForm = ({
   handleSubmit,
@@ -37,17 +18,9 @@ const ChatForm = ({
   runId,
   streamingUrl,
   cancelRun,
+  textareaRef,
   placeholder = 'Ask TinyFish to extract data or automate a workflow...',
 }: ChatFormProps) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }, [goal]);
-
   return (
     <form
       onSubmit={handleSubmit}
@@ -156,7 +129,7 @@ const ChatForm = ({
           placeholder={placeholder}
           required
           disabled={loading}
-          rows={1}
+          rows={2}
           className="flex-1 min-h-12.5 max-h-37.5 overflow-y-auto w-full resize-none bg-transparent px-3 py-3.5 text-[15px] text-[#e7ecf4] outline-none placeholder:text-slate-500 disabled:opacity-50 leading-relaxed custom-scrollbar"
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {

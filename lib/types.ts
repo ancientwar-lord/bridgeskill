@@ -72,6 +72,6 @@ export interface ChatFormProps {
   runId: string | null;
   streamingUrl: string | null;
   cancelRun: () => void;
-  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
   placeholder?: string;
 }

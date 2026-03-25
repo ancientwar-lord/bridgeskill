@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useCallback, useState, useRef } from 'react';
+import { FormEvent, useCallback, useState, useRef, useEffect } from 'react';
 
 export type ChatMessage = {
   id: number;
@@ -24,9 +24,36 @@ export type MentorChatState = {
   streamingUrl: string | null;
   handleSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
   cancelRun: () => Promise<void>;
+  loadMessages: (
+    historyMessages: Array<{ role: 'user' | 'assistant'; content: string }>,
+  ) => void;
+  currentChatId: string | null;
+  setCurrentChatId: (chatId: string | null) => void;
+  resetChat: () => void;
+  activeChatId: string | null;
+  setActiveChatId: (chatId: string | null) => void;
+  showUrlField: boolean;
+  setShowUrlField: React.Dispatch<React.SetStateAction<boolean>>;
+  showPreviousChats: boolean;
+  setShowPreviousChats: React.Dispatch<React.SetStateAction<boolean>>;
+  messagesEndRef: React.RefObject<HTMLDivElement | null>;
 };
 
-export function useAgentChat(apiRoute: string): MentorChatState {
+export function useAgentChat(
+  apiRoute: string,
+  mentorTag = 'personal',
+  sessionName = 'Mentor Chat',
+  onSaveChat?: (payload: {
+    mentorTag: string;
+    sessionName: string;
+    messages: Array<{
+      role: 'user' | 'assistant';
+      content: string;
+      createdAt: string;
+    }>;
+    chatId?: string | null;
+  }) => Promise<{ success: boolean; chatId: string | null }>,
+): MentorChatState {
   const [goal, setGoal] = useState('');
   const [url, setUrl] = useState('');
   const [urls, setUrls] = useState<string[]>([]);
@@ -36,6 +63,14 @@ export function useAgentChat(apiRoute: string): MentorChatState {
   const [rawResponse, setRawResponse] = useState<string>('');
   const [runId, setRunId] = useState<string | null>(null);
   const [streamingUrl, setStreamingUrl] = useState<string | null>(null);
+  const [sessionTitle, setSessionTitle] = useState<string>(sessionName);
+  const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+  const [activeChatId, setActiveChatId] = useState<string | null>(null);
+  const [showUrlField, setShowUrlField] = useState(false);
+  const [showPreviousChats, setShowPreviousChats] = useState(false);
+
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
   const abortControllerRef = useRef<AbortController | null>(null);
   const messageIdCounterRef = useRef<number>(0);
   const nextMessageId = () => {
@@ -43,6 +78,12 @@ export function useAgentChat(apiRoute: string): MentorChatState {
     messageIdCounterRef.current = (messageIdCounterRef.current + 1) % 1000;
     return now * 1000 + messageIdCounterRef.current;
   };
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, loading, messagesEndRef]);
 
   const addUrl = useCallback(() => {
     const normalized = url.trim();
@@ -58,6 +99,38 @@ export function useAgentChat(apiRoute: string): MentorChatState {
 
   const removeUrl = useCallback((value: string) => {
     setUrls((prev) => prev.filter((u) => u !== value));
+  }, []);
+
+  const loadMessages = useCallback(
+    (
+      historyMessages: Array<{ role: 'user' | 'assistant'; content: string }>,
+    ) => {
+      const mapped: ChatMessage[] = historyMessages.map((message) => ({
+        id: nextMessageId(),
+        role: message.role,
+        text: message.content,
+      }));
+      setMessages(mapped);
+    },
+    [],
+  );
+
+  const resetChat = useCallback(() => {
+    setGoal('');
+    setUrl('');
+    setUrls([]);
+    setMessages([]);
+    setLoading(false);
+    setError(null);
+    setRawResponse('');
+    setRunId(null);
+    setStreamingUrl(null);
+    setCurrentChatId(null);
+    setActiveChatId(null);
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
   }, []);
 
   const cancelRun = useCallback(async () => {
@@ -82,11 +155,21 @@ export function useAgentChat(apiRoute: string): MentorChatState {
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-
+      console.log('Submitting with goal:', goal, 'and url:', url);
       const trimmedGoal = goal.trim();
       if (!trimmedGoal) {
         setError('Please provide a goal or question.');
         return;
+      }
+      console.log('trimmedGoal:', trimmedGoal);
+      const derivedSession =
+        currentChatId || !trimmedGoal
+          ? sessionTitle
+          : trimmedGoal.split(/\s+/).filter(Boolean).slice(0, 8).join(' ') ||
+            'New Chat';
+      console.log('Derived session title:', derivedSession);
+      if (!currentChatId) {
+        setSessionTitle(derivedSession);
       }
 
       setError(null);
@@ -108,6 +191,9 @@ export function useAgentChat(apiRoute: string): MentorChatState {
         role: 'assistant',
         text: 'Starting automation...',
       };
+
+      let completedChatText = '';
+      let isCompleted = false;
 
       setMessages((prev) => [...prev, userMessage, assistantMessage]);
 
@@ -164,7 +250,9 @@ export function useAgentChat(apiRoute: string): MentorChatState {
                     break;
                   case 'COMPLETE':
                     if (eventPayload.status === 'COMPLETED') {
-                      accumulatedText += `\n✅ Completed!\nResult: ${JSON.stringify(eventPayload.result, null, 2)}`;
+                      isCompleted = true;
+                      completedChatText = `${accumulatedText}\n✅ Completed!\nResult: ${JSON.stringify(eventPayload.result, null, 2)}`;
+                      accumulatedText = completedChatText;
                     } else {
                       accumulatedText += `\n❌ Failed: ${eventPayload.error?.message || 'Automation failed'}`;
                     }
@@ -181,11 +269,31 @@ export function useAgentChat(apiRoute: string): MentorChatState {
                       : message,
                   ),
                 );
-              } catch (parseError) {
+              } catch {
                 console.warn('Could not parse SSE JSON line:', line);
               }
             }
           }
+        }
+
+        if (isCompleted && onSaveChat) {
+          await onSaveChat({
+            mentorTag,
+            sessionName: sessionTitle,
+            messages: [
+              {
+                role: 'user',
+                content: trimmedGoal,
+                createdAt: new Date().toISOString(),
+              },
+              {
+                role: 'assistant',
+                content: completedChatText || 'Completed response.',
+                createdAt: new Date().toISOString(),
+              },
+            ],
+            chatId: currentChatId,
+          });
         }
       } catch (err: unknown) {
         if (err instanceof Error && err.name === 'AbortError') return;
@@ -206,7 +314,16 @@ export function useAgentChat(apiRoute: string): MentorChatState {
         setUrl('');
       }
     },
-    [apiRoute, goal, url, urls],
+    [
+      apiRoute,
+      goal,
+      url,
+      urls,
+      currentChatId,
+      sessionTitle,
+      mentorTag,
+      onSaveChat,
+    ],
   );
 
   return {
@@ -225,5 +342,16 @@ export function useAgentChat(apiRoute: string): MentorChatState {
     streamingUrl,
     handleSubmit,
     cancelRun,
+    loadMessages,
+    resetChat,
+    currentChatId,
+    setCurrentChatId,
+    activeChatId,
+    setActiveChatId,
+    showUrlField,
+    setShowUrlField,
+    showPreviousChats,
+    setShowPreviousChats,
+    messagesEndRef,
   };
 }
