@@ -10,10 +10,22 @@ type IncomingChatMessage = {
 
 type IncomingChatPayload = {
   mentorTag?: 'personal' | 'founder' | 'research';
-  sessionName?: string;
   chatId?: string;
   messages: IncomingChatMessage[];
 };
+
+function deriveSessionName(messages: IncomingChatMessage[]): string {
+  const firstUserMessage = messages.find(
+    (message) => message.role === 'user' && message.content.trim().length > 0,
+  );
+
+  if (!firstUserMessage) {
+    return 'New Chat';
+  }
+
+  const normalized = firstUserMessage.content.trim().replace(/\s+/g, ' ');
+  return normalized.slice(0, 120);
+}
 
 export async function POST(request: Request): Promise<Response> {
   try {
@@ -30,12 +42,7 @@ export async function POST(request: Request): Promise<Response> {
 
     const body = (await request.json()) as IncomingChatPayload;
     console.log('body', body);
-    const {
-      mentorTag = 'personal',
-      sessionName = 'Mentor Chat',
-      chatId,
-      messages,
-    } = body;
+    const { mentorTag = 'personal', chatId, messages } = body;
 
     if (!Array.isArray(messages) || messages.length === 0) {
       return new Response(
@@ -75,10 +82,6 @@ export async function POST(request: Request): Promise<Response> {
         })),
       );
 
-      if (sessionName) {
-        existingChat.sessionName = sessionName;
-      }
-
       await existingChat.save();
       return new Response(
         JSON.stringify({ success: true, chatId: existingChat._id }),
@@ -92,7 +95,7 @@ export async function POST(request: Request): Promise<Response> {
     const savedChat = await Chat.create({
       userId: session.user.id,
       mentorTag,
-      sessionName,
+      sessionName: deriveSessionName(messages),
       messages: messages.map((message) => ({
         role: message.role,
         content: message.content,
@@ -139,10 +142,20 @@ export async function GET(request: Request): Promise<Response> {
     const mentorTag = url.searchParams.get('mentorTag');
 
     if (chatId) {
-      const chat = await Chat.findOne({
+      const chatQuery: { _id: string; userId: string; mentorTag?: string } = {
         _id: chatId,
         userId: session.user.id,
-      }).lean();
+      };
+
+      if (
+        mentorTag === 'personal' ||
+        mentorTag === 'founder' ||
+        mentorTag === 'research'
+      ) {
+        chatQuery.mentorTag = mentorTag;
+      }
+
+      const chat = await Chat.findOne(chatQuery).lean();
       if (!chat) {
         return new Response(
           JSON.stringify({ success: false, error: 'Chat not found' }),

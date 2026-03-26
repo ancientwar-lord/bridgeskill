@@ -4,11 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAgentChat } from '@/ui/hooks/use-agent-chat';
 import { useChatHistory } from '@/ui/hooks/use-chat-history';
 
-export function useChatUI(
-  apiRoute: string,
-  mentorTag: string = 'personal',
-  sessionName: string = 'Mentor Chat',
-) {
+export function useChatUI(apiRoute: string, mentorTag: string = 'personal') {
   const {
     chats,
     chatsLoading,
@@ -18,18 +14,13 @@ export function useChatUI(
     deleteChat,
   } = useChatHistory(mentorTag);
 
-  const chatProps = useAgentChat(
-    apiRoute,
-    mentorTag,
-    sessionName,
-    async (payload) => {
-      const result = await saveChat(payload);
-      if (!result.success) {
-        console.error('failed to save chat', result);
-      }
-      return result;
-    },
-  );
+  const chatProps = useAgentChat(apiRoute, mentorTag, async (payload) => {
+    const result = await saveChat(payload);
+    if (!result.success) {
+      console.error('failed to save chat', result);
+    }
+    return result;
+  });
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);

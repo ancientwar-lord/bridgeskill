@@ -46,10 +46,10 @@ export function MentorNav() {
             })}
           </div>
 
-          <div className="flex items-center gap-3 pb-1 pr-10">
+          <div className="flex items-center gap-3 pb-2 pr-8">
             <button
               onClick={() => setExploreOpen(true)}
-              className=" cursor p-2 font-semibold  text-slate-300 hover:text-white hover:bg-white/10  rounded-xl px-4"
+              className=" cursor p-2 font-semibold  text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl px-6"
             >
               Select Mentors
             </button>

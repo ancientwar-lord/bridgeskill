@@ -20,7 +20,7 @@ export function useChatHistory(mentorTag: string) {
 
     try {
       const response = await fetch(
-        `/api/chat?mentor=${encodeURIComponent(mentorTag)}`,
+        `/api/chat?mentorTag=${encodeURIComponent(mentorTag)}`,
         {
           method: 'GET',
         },
@@ -57,7 +57,6 @@ export function useChatHistory(mentorTag: string) {
   const saveChat = useCallback(
     async (payload: {
       mentorTag: string;
-      sessionName: string;
       messages: Array<{
         role: 'user' | 'assistant';
         content: string;
@@ -92,36 +91,42 @@ export function useChatHistory(mentorTag: string) {
     [loadChats],
   );
 
-  const loadChatById = useCallback(async (chatId: string) => {
-    try {
-      const response = await fetch(`/api/chat?id=${chatId}`, {
-        method: 'GET',
-      });
+  const loadChatById = useCallback(
+    async (chatId: string) => {
+      try {
+        const response = await fetch(
+          `/api/chat?id=${chatId}&mentorTag=${encodeURIComponent(mentorTag)}`,
+          {
+            method: 'GET',
+          },
+        );
 
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`Failed to load chat: ${response.status} ${text}`);
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(`Failed to load chat: ${response.status} ${text}`);
+        }
+
+        const payload = await response.json();
+        if (!payload.success || !payload.chat) {
+          throw new Error('Chat not found');
+        }
+
+        return {
+          success: true,
+          sessionName: payload.chat.sessionName,
+          messages:
+            (payload.chat.messages as Array<{
+              role: 'user' | 'assistant' | 'system';
+              content: string;
+            }>) || [],
+        };
+      } catch (err) {
+        console.error('Could not load chat by id', err);
+        return { success: false, sessionName: '', messages: [] };
       }
-
-      const payload = await response.json();
-      if (!payload.success || !payload.chat) {
-        throw new Error('Chat not found');
-      }
-
-      return {
-        success: true,
-        sessionName: payload.chat.sessionName,
-        messages:
-          (payload.chat.messages as Array<{
-            role: 'user' | 'assistant' | 'system';
-            content: string;
-          }>) || [],
-      };
-    } catch (err) {
-      console.error('Could not load chat by id', err);
-      return { success: false, sessionName: '', messages: [] };
-    }
-  }, []);
+    },
+    [mentorTag],
+  );
 
   const deleteChat = useCallback(async (chatId: string) => {
     try {

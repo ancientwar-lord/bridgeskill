@@ -45,5 +45,5 @@ export default async function DynamicMentorPage({ params }: MentorPageProps) {
     );
   }
 
-  return <BaseAgentChat config={mentorConfig} />;
+  return <BaseAgentChat key={mentorConfig.slug} config={mentorConfig} />;
 }
