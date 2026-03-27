@@ -7,8 +7,7 @@ export default function MentorAiLayout({
   return (
     <div className="relative min-h-screen bg-[#10141a] text-[#dfe2eb]">
       <MentorNav />
-
-      <main className="pt-20">{children}</main>
+      {children}
     </div>
   );
 }

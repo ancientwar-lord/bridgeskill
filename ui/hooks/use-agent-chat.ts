@@ -42,10 +42,8 @@ export type MentorChatState = {
 export function useAgentChat(
   apiRoute: string,
   mentorTag = 'personal',
-  sessionName = 'Mentor Chat',
   onSaveChat?: (payload: {
     mentorTag: string;
-    sessionName: string;
     messages: Array<{
       role: 'user' | 'assistant';
       content: string;
@@ -63,7 +61,6 @@ export function useAgentChat(
   const [rawResponse, setRawResponse] = useState<string>('');
   const [runId, setRunId] = useState<string | null>(null);
   const [streamingUrl, setStreamingUrl] = useState<string | null>(null);
-  const [sessionTitle, setSessionTitle] = useState<string>(sessionName);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [showUrlField, setShowUrlField] = useState(false);
@@ -160,16 +157,6 @@ export function useAgentChat(
       if (!trimmedGoal) {
         setError('Please provide a goal or question.');
         return;
-      }
-      console.log('trimmedGoal:', trimmedGoal);
-      const derivedSession =
-        currentChatId || !trimmedGoal
-          ? sessionTitle
-          : trimmedGoal.split(/\s+/).filter(Boolean).slice(0, 8).join(' ') ||
-            'New Chat';
-      console.log('Derived session title:', derivedSession);
-      if (!currentChatId) {
-        setSessionTitle(derivedSession);
       }
 
       setError(null);
@@ -277,9 +264,8 @@ export function useAgentChat(
         }
 
         if (isCompleted && onSaveChat) {
-          await onSaveChat({
+          const saveResult = await onSaveChat({
             mentorTag,
-            sessionName: sessionTitle,
             messages: [
               {
                 role: 'user',
@@ -294,6 +280,11 @@ export function useAgentChat(
             ],
             chatId: currentChatId,
           });
+
+          if (saveResult.success && saveResult.chatId) {
+            setCurrentChatId(saveResult.chatId);
+            setActiveChatId(saveResult.chatId);
+          }
         }
       } catch (err: unknown) {
         if (err instanceof Error && err.name === 'AbortError') return;
@@ -314,16 +305,7 @@ export function useAgentChat(
         setUrl('');
       }
     },
-    [
-      apiRoute,
-      goal,
-      url,
-      urls,
-      currentChatId,
-      sessionTitle,
-      mentorTag,
-      onSaveChat,
-    ],
+    [apiRoute, goal, url, urls, currentChatId, mentorTag, onSaveChat],
   );
 
   return {

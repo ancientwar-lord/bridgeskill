@@ -8,7 +8,7 @@ export default function MentorHomePage() {
 
   return (
     <main className="p-8">
-      <BaseAgentChat config={personalMentor!} />
+      <BaseAgentChat key={personalMentor?.slug} config={personalMentor!} />
     </main>
   );
 }

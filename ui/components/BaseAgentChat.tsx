@@ -24,7 +24,7 @@ export default function BaseAgentChat({ config }: BaseAgentChatProps) {
     textareaRef,
     settingsOpen,
     setSettingsOpen,
-  } = useChatUI(config.apiRoute, config.slug ?? 'personal', config.title);
+  } = useChatUI(config.apiRoute, config.slug ?? 'personal');
 
   const {
     showUrlField,

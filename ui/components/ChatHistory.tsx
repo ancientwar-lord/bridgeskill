@@ -43,7 +43,7 @@ export default function ChatHistory({
               }}
               className="w-full text-left"
             >
-              <div className="font-medium text-slate-100 truncate">
+              <div className="cursor-pointer font-medium text-slate-100 truncate">
                 {chat.sessionName}
               </div>
             </button>

@@ -1,9 +1,6 @@
 import mongoose, { Document } from 'mongoose';
 
-export type MentorTag =
-  | 'personal'
-  | 'founder'
-  | 'research'
+export type MentorTag = 'personal' | 'founder' | 'research';
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -20,11 +17,7 @@ export interface Chat extends Document {
   updatedAt: Date;
 }
 
-const allowedMentorTags: MentorTag[] = [
-  'personal',
-  'founder',
-  'research',
-];
+const allowedMentorTags: MentorTag[] = ['personal', 'founder', 'research'];
 
 const ChatMessageSchema = new mongoose.Schema<ChatMessage>(
   {
@@ -44,14 +37,14 @@ const ChatMessageSchema = new mongoose.Schema<ChatMessage>(
       default: () => new Date(),
     },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const ChatSchema = new mongoose.Schema<Chat>(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'users',
       required: true,
     },
     mentorTag: {
@@ -77,7 +70,7 @@ const ChatSchema = new mongoose.Schema<Chat>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default mongoose.models.Chat || mongoose.model<Chat>('Chat', ChatSchema);
