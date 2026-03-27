@@ -36,13 +36,13 @@ export default function Sidebar({
       badge: '0',
     },
     { name: 'Mentor AI', href: '/mentor-ai', icon: <Goal size={20} /> },
-    { name: 'Explore', href: '/explore', icon: <Compass size={20} /> },
+    { name: 'Exploration', href: '/explore', icon: <Compass size={20} /> },
     {
       name: 'Opportunities',
       href: '/opportunities',
       icon: <Briefcase size={20} />,
     },
-    { name: 'Roadmaps', href: '/roadmaps', icon: <Map size={20} /> },
+    { name: 'BridgeMap', href: '/bridgemap', icon: <Map size={20} /> },
     { name: 'Settings', href: '/settings', icon: <Settings size={20} /> },
   ];
 

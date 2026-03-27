@@ -1,5 +1,5 @@
 import RoadmapsComp from '@/ui/components/RoadmapsComp';
 
-export default function RoadmapPage() {
+export default function BridgeMapPage() {
   return <RoadmapsComp />;
 }
